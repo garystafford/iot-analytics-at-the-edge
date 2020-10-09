@@ -8,4 +8,8 @@ In the post, we explore the integration of several open-source software applicat
 
 ## GTM Stack Architecture
 
+<<<<<<< HEAD
 ![GTM Stack Architecture](graphics/gtm_stack.png)
+=======
+![GTM Stack Architecture](./graphics/IoT Edge Analytics GTM Stack.png)
+>>>>>>> 766d177016e024a7d18baa6536b066dd2cd01e84
