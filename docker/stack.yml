@@ -1,0 +1,68 @@
+# docker stack deploy -c stack.yml iot
+version: "3.8"
+services:
+  timescaledb:
+    image: timescale/timescaledb:1.7.4-pg12
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    networks:
+      - demo-iot-net
+    environment:
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres1234
+      POSTGRES_DB: demo_iot
+    deploy:
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - $HOME/data/postgres:/var/lib/postgresql/data
+  grafana:
+    image: grafana/grafana:7.1.5
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: host
+    networks:
+      - demo-iot-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - $HOME/data/grafana:/var/lib/grafana
+    user: $ID
+  mosquitto:
+    image: eclipse-mosquitto:1.6.12
+    ports:
+      - target: 1883
+        published: 1884
+        protocol: tcp
+        mode: host
+      - target: 9001
+        published: 9001
+        protocol: tcp
+        mode: host
+    networks:
+      - demo-iot-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - $HOME/data/mosquitto:/mosquitto
+  pgadmin:
+    image: biarms/pgadmin4:4.21
+    ports:
+      - target: 5050
+        published: 5050
+        protocol: tcp
+        mode: host
+    networks:
+     - demo-iot-net
+    deploy:
+     restart_policy:
+       condition: on-failure
+networks:
+  demo-iot-net:

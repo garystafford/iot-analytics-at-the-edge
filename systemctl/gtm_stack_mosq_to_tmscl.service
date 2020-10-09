@@ -1,0 +1,16 @@
+[Unit]
+Description=GTM Stack - Mosquitto to TimescaleDB Script
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u mosquitto_to_timescaledb.py \
+    --msqt_topic "sensor/output" --msqt_host "192.168.1.12" --msqt_port 1884 \
+    --ts_host "192.168.1.12" --ts_port 5432
+WorkingDirectory=/home/pi/timescaledb
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
