@@ -1,12 +1,12 @@
 CREATE DATABASE demo_iot;
-
 \c
 
 demo_iot
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
-
 \q
 
+
+-- iot data table
 CREATE TABLE IF NOT EXISTS sensor_data
 (
     time        timestamptz      NOT NULL,
@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS sensor_data
 
 SELECT create_hypertable('sensor_data', 'time');
 
+
+--views
 -- temperature and humidity
 CREATE VIEW temperature_humidity_summary_minute WITH (timescaledb.continuous) AS
 SELECT device_id,
@@ -73,6 +75,7 @@ FROM sensor_data
 GROUP BY device_id,
          bucket;
 
+
 -- grafana user and grants
 CREATE USER grafanareader WITH PASSWORD 'grafana1234';
 GRANT USAGE ON SCHEMA public TO grafanareader;
@@ -82,8 +85,8 @@ GRANT SELECT ON public.air_quality_summary_minute TO grafanareader;
 GRANT SELECT ON public.light_summary_minute TO grafanareader;
 GRANT SELECT ON public.motion_summary_minute TO grafanareader;
 
--- ad-hoc queries
 
+-- ad-hoc queries
 -- find max temperature (°C) and humidity (%) for last 3 hours in 15 minute time periods
 -- https://docs.timescale.com/latest/using-timescaledb/reading-data#select
 SELECT time_bucket('15 minutes', time) AS fifteen_min,
