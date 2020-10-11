@@ -38,11 +38,7 @@ services:
     image: eclipse-mosquitto:1.6.12
     ports:
       - target: 1883
-        published: 1884
-        protocol: tcp
-        mode: host
-      - target: 9001
-        published: 9001
+        published: 1883
         protocol: tcp
         mode: host
     networks:
