@@ -1,13 +1,9 @@
-# docker stack deploy -c stack.yml iot
 version: "3.8"
 services:
   timescaledb:
     image: timescale/timescaledb:1.7.4-pg12
     ports:
-      - target: 5432
-        published: 5432
-        protocol: tcp
-        mode: host
+      - "5432:5432/tcp"
     networks:
       - demo-iot-net
     environment:
@@ -22,10 +18,7 @@ services:
   grafana:
     image: grafana/grafana:7.1.5
     ports:
-      - target: 3000
-        published: 3000
-        protocol: tcp
-        mode: host
+      - "3000:3000/tcp"
     networks:
       - demo-iot-net
     deploy:
@@ -37,10 +30,8 @@ services:
   mosquitto:
     image: eclipse-mosquitto:1.6.12
     ports:
-      - target: 1883
-        published: 1883
-        protocol: tcp
-        mode: host
+      - "1883:1883/tcp"
+      # - "9001:9001/tcp"
     networks:
       - demo-iot-net
     deploy:
@@ -51,14 +42,11 @@ services:
   pgadmin:
     image: biarms/pgadmin4:4.21
     ports:
-      - target: 5050
-        published: 5050
-        protocol: tcp
-        mode: host
+      - "5050:5050/tcp"
     networks:
-     - demo-iot-net
+      - demo-iot-net
     deploy:
-     restart_policy:
-       condition: on-failure
+      restart_policy:
+        condition: on-failure
 networks:
   demo-iot-net:

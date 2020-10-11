@@ -12,8 +12,10 @@ from getmac import get_mac_address
 from pytz import timezone
 
 # Author: Gary A. Stafford
-# Usage: python3 sensor_data_to_mosquitto.py
-#           --host "192.168.1.12" --port 1884 --topic "sensor/output" --frequency 10
+# Date: 10/11/2020
+# Usage: python3 sensor_data_to_mosquitto.py \
+#           --host "192.168.1.12" --port 1883 \
+#           --topic "sensor/output" --frequency 10
 
 sensors = Sensors()
 
@@ -29,7 +31,7 @@ def main():
 def get_readings():
     sensors.led_state(0)
 
-    # Create message payload
+    # Retrieve sensor readings
     payload_dht = sensors.get_sensor_data_dht()
     payload_gas = sensors.get_sensor_data_gas()
     payload_light = sensors.get_sensor_data_light()
@@ -65,8 +67,9 @@ def publish_message_to_db(args):
         logger.debug(message_json)
 
         try:
-            publish.single(args.topic, payload=message_json, qos=0, retain=False, hostname=args.host,
-                           port=args.port, client_id="", keepalive=60, will=None, auth=None, tls=None,
+            publish.single(args.topic, payload=message_json, qos=0, retain=False, 
+                           hostname=args.host, port=args.port, client_id="", 
+                           keepalive=60, will=None, auth=None, tls=None, 
                            protocol=client.MQTTv311, transport="tcp")
         except Exception as error:
             logger.error("Exception: {}".format(error))
@@ -86,4 +89,4 @@ def parse_args():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
