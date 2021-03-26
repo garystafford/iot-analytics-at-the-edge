@@ -1,10 +1,7 @@
 CREATE DATABASE demo_iot;
 \c
 
-demo_iot
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
-\q
-
 
 -- iot data table
 CREATE TABLE IF NOT EXISTS sensor_data
@@ -22,22 +19,23 @@ CREATE TABLE IF NOT EXISTS sensor_data
 
 SELECT create_hypertable('sensor_data', 'time');
 
+SELECT COUNT(*) FROM sensor_data;
 
 --views
 -- temperature and humidity
-CREATE VIEW temperature_humidity_summary_minute WITH (timescaledb.continuous) AS
+CREATE MATERIALIZED VIEW temperature_humidity_summary_minute WITH (timescaledb.continuous) AS
 SELECT device_id,
        time_bucket(INTERVAL '1 minute', time) AS bucket,
        AVG(temperature) AS avg_temp,
        AVG(humidity) AS avg_humidity
 FROM sensor_data
-WHERE avg_humidity >= 0.0
-  AND avg_humidity <= 100.0
+WHERE humidity >= 0.0
+  AND humidity <= 100.0
 GROUP BY device_id,
          bucket;
 
 -- air quality (lpg, co, smoke)
-CREATE VIEW air_quality_summary_minute WITH (timescaledb.continuous) AS
+CREATE MATERIALIZED VIEW air_quality_summary_minute WITH (timescaledb.continuous) AS
 SELECT device_id,
        time_bucket(INTERVAL '1 minute', time) AS bucket,
        AVG(lpg) AS avg_lpg,
@@ -48,7 +46,7 @@ GROUP BY device_id,
          bucket;
 
 -- light
-CREATE VIEW light_summary_minute WITH (timescaledb.continuous) AS
+CREATE MATERIALIZED VIEW light_summary_minute WITH (timescaledb.continuous) AS
 SELECT device_id,
        time_bucket(INTERVAL '1 minute', time) AS bucket,
        AVG(
@@ -62,7 +60,7 @@ GROUP BY device_id,
          bucket;
 
 -- motion
-CREATE VIEW motion_summary_minute WITH (timescaledb.continuous) AS
+CREATE MATERIALIZED VIEW motion_summary_minute WITH (timescaledb.continuous) AS
 SELECT device_id,
        time_bucket(INTERVAL '1 minute', time) AS bucket,
        AVG(

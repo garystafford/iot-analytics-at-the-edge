@@ -5,7 +5,6 @@ import sys
 import time
 from datetime import datetime
 
-import paho.mqtt.client as client
 import paho.mqtt.publish as publish
 from Sensors import Sensors
 from getmac import get_mac_address
@@ -60,6 +59,7 @@ def date_converter(o):
 
 
 def publish_message_to_db(args):
+
     while True:
         message = get_readings()
         message_json = json.dumps(message, default=date_converter, sort_keys=True,
@@ -67,10 +67,7 @@ def publish_message_to_db(args):
         logger.debug(message_json)
 
         try:
-            publish.single(args.topic, payload=message_json, qos=0, retain=False, 
-                           hostname=args.host, port=args.port, client_id="", 
-                           keepalive=60, will=None, auth=None, tls=None, 
-                           protocol=client.MQTTv311, transport="tcp")
+            publish.single(args.topic, payload=message_json, hostname="192.168.1.12", port=9001)
         except Exception as error:
             logger.error("Exception: {}".format(error))
         finally:
