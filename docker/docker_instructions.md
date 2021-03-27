@@ -1,25 +1,31 @@
 # Docker Instructions
 
 ```shell
-docker run --name tmp_mosquitto -p 1884:1883 eclipse-mosquitto:2.0.9
+docker run --name tmp_mosquitto -p 1883:1883 eclipse-mosquitto:2.0.9
 docker exec -it tmp_mosquitto cat /mosquitto/config/mosquitto.conf eclipse-mosquitto
 docker rm -f tmp_mosquitto
 ```
+
+Create on Gateway.
 
 ```shell
 mkdir -p ~/data/postgres
 mkdir -p ~/data/grafana
 mkdir -p ~/data/mosquitto/config
 ```
+
 ```shell
-EDGE_DEVICE_HOST=192.168.1.12
-scp -i ~/.ssh/rasppi docker/mosquitto.conf \
-  pi@${EDGE_DEVICE_HOST}:~/data/mosquitto/config/
+# EDGE_DEVICE_HOST=192.168.1.12
+# scp -i ~/.ssh/rasppi docker/mosquitto.conf \
+#     pi@${EDGE_DEVICE_HOST}:~/data/mosquitto/config/
 ```
+
+Create on Gateway.
 
 ```shell
 docker swarm init
 docker stack deploy -c stack.yml iot
+
 docker stack ps iot --no-trunc
 docker stack services iot
 ```
@@ -43,6 +49,8 @@ woyaqpiohu7c   iot_pgadmin       replicated   1/1        biarms/pgadmin4:4.21   
 ij1huytkfh5c   iot_timescaledb   replicated   1/1        timescale/timescaledb:2.0.0-pg12   *:5432->5432/tcp
 ```
 
+Delete stack.
+
 ```shell
 docker stack rm iot
 ```
@@ -62,3 +70,7 @@ mosquitto_pub -d -t sensor/output -m '{"data":{"co":0.004965300196440765,"humidi
 07661274225855072,"motion":false,"smoke":0.020441056991654268,"temperature":null},"device_id":"b8:27:eb:bf:9d:51","
 time":"2021-03-26 16:03:24.437824+00:00"}'
 ```
+
+## $SYS Topics
+
+<https://github.com/mqtt/mqtt.org/wiki/SYS-Topics>
