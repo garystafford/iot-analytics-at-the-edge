@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS sensor_data
 
 SELECT create_hypertable('sensor_data', 'time');
 
+TRUNCATE sensor_data;
 SELECT COUNT(*) FROM sensor_data;
 
 --views

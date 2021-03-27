@@ -1,7 +1,6 @@
 import argparse
 import logging
 import sys
-import time
 from datetime import datetime
 
 import paho.mqtt.publish as publish
@@ -32,13 +31,8 @@ def publish_message_to_db(args):
                              "temperature": 20.600000381469727},
                     "device_id": "b8:27:eb:bf:9d:51", "time": "2021-03-27 00:49:05.081242+00:00"}
     logger.debug(message_json)
-
-    try:
-        publish.single(args.topic, payload=message_json, hostname=args.host, port=args.port)
-    except Exception as error:
-        logger.error("Exception: {}".format(error))
-    finally:
-        time.sleep(args.frequency)
+    logger.debug(args)
+    publish.single(args.topic, payload=message_json, hostname=args.host, port=args.port)
 
 
 # Read in command-line parameters

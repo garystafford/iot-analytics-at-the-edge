@@ -31,7 +31,7 @@ services:
     image: eclipse-mosquitto:2.0.9
     ports:
       - "1883:1883/tcp"
-      # - "9001:9001/tcp" # protocol websockets
+      - "9001:9001/tcp"
     networks:
       - demo-iot-net
     deploy:
