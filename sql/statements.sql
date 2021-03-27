@@ -21,6 +21,7 @@ SELECT create_hypertable('sensor_data', 'time');
 
 TRUNCATE sensor_data;
 SELECT COUNT(*) FROM sensor_data;
+SELECT * FROM sensor_data LIMIT 10;
 
 --views
 -- temperature and humidity
