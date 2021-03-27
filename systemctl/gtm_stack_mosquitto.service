@@ -5,7 +5,7 @@ After=network.target
 [Service]
 ExecStart=/usr/bin/python3 -u sensor_data_to_mosquitto.py \
     --host "192.168.1.12" --port 1883 --topic "sensor/output"
-WorkingDirectory=/home/pi/timescaledb
+WorkingDirectory=/home/pi/iot-analytics-at-the-edge/scripts
 StandardOutput=inherit
 StandardError=inherit
 Restart=always

@@ -15,7 +15,7 @@ ps aux | grep sensor_data_to_mosquitto.py
 sudo systemctl restart ${SERVICE}.service
 systemctl status ${SERVICE}
 
-# Edge Node
+# Edge Node/Gateway
 SERVICE=gtm_stack_mosq_to_tmscl
 sudo cp ${SERVICE}.service /etc/systemd/system/
 sudo systemctl stop ${SERVICE}.service
