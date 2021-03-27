@@ -24,7 +24,7 @@ SELECT COUNT(*) FROM sensor_data;
 
 --views
 -- temperature and humidity
-CREATE MATERIALIZED VIEW temperature_humidity_summary_minute WITH (timescaledb.continuous) AS
+CREATE OR REPLACE VIEW temperature_humidity_summary_minute WITH (timescaledb.continuous) AS
 SELECT device_id,
        time_bucket(INTERVAL '1 minute', time) AS bucket,
        AVG(temperature) AS avg_temp,
@@ -33,7 +33,8 @@ FROM sensor_data
 WHERE humidity >= 0.0
   AND humidity <= 100.0
 GROUP BY device_id,
-         bucket;
+         bucket
+ORDER BY bucket;
 
 -- air quality (lpg, co, smoke)
 CREATE MATERIALIZED VIEW air_quality_summary_minute WITH (timescaledb.continuous) AS
@@ -84,6 +85,11 @@ GRANT SELECT ON public.air_quality_summary_minute TO grafanareader;
 GRANT SELECT ON public.light_summary_minute TO grafanareader;
 GRANT SELECT ON public.motion_summary_minute TO grafanareader;
 
+-- query views
+SELECT *
+FROM temperature_humidity_summary_minute
+ORDER BY bucket;
+
 
 -- ad-hoc queries
 -- find max temperature (°C) and humidity (%) for last 3 hours in 15 minute time periods
@@ -101,12 +107,12 @@ ORDER BY fifteen_min DESC, max_temp DESC;
 
 -- find temperature (°C) anomalies (delta > ~5°F)
 -- https://docs.timescale.com/latest/using-timescaledb/reading-data#delta
+WITH ht AS (SELECT time,
+                   temperature,
+                   ABS(temperature - LAG(temperature) OVER (ORDER BY time)) AS delta
+            FROM sensor_data)
 SELECT ht.time, ht.temperature, ht.delta
-FROM (
-         SELECT time,
-                temperature,
-                ABS(temperature - LAG(temperature) OVER (ORDER BY time)) AS delta
-         FROM sensor_data) AS ht
+FROM ht
 WHERE ht.delta > 2.63
 ORDER BY ht.time;
 

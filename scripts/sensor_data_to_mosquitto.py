@@ -1,16 +1,23 @@
 import argparse
+import json
 import logging
 import sys
 import time
 from datetime import datetime
 
 import paho.mqtt.publish as publish
+from getmac import get_mac_address
+from pytz import timezone
+
+from Sensors import Sensors
 
 # Author: Gary A. Stafford
 # Date: 2021-03-26
 # Usage: python3 sensor_data_to_mosquitto.py \
 #           --host "192.168.1.12" --port 1883 \
 #           --topic "sensor/output" --frequency 10
+
+sensors = Sensors()
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -21,24 +28,50 @@ def main():
     publish_message_to_db(args)
 
 
+def get_readings():
+    sensors.led_state(0)
+
+    # Retrieve sensor readings
+    payload_dht = sensors.get_sensor_data_dht()
+    payload_gas = sensors.get_sensor_data_gas()
+    payload_light = sensors.get_sensor_data_light()
+    payload_motion = sensors.get_sensor_data_motion()
+
+    message = {
+        "device_id": get_mac_address(),
+        "time": datetime.now(timezone("UTC")),
+        "data": {
+            "temperature": payload_dht["temperature"],
+            "humidity": payload_dht["humidity"],
+            "lpg": payload_gas["lpg"],
+            "co": payload_gas["co"],
+            "smoke": payload_gas["smoke"],
+            "light": payload_light["light"],
+            "motion": payload_motion["motion"]
+        }
+    }
+
+    return message
+
+
 def date_converter(o):
     if isinstance(o, datetime):
         return o.__str__()
 
 
 def publish_message_to_db(args):
-    message_json = {"data": {"co": 0.004997145778992383, "humidity": 52.599998474121094, "light": False,
-                             "lpg": 0.007696788375166227, "motion": False, "smoke": 0.020542288909950537,
-                             "temperature": 20.600000381469727},
-                    "device_id": "b8:27:eb:bf:9d:51", "time": "2021-03-27 00:49:05.081242+00:00"}
-    logger.debug(message_json)
+    while True:
+        message = get_readings()
+        message_json = json.dumps(message, default=date_converter, sort_keys=True,
+                                  indent=None, separators=(',', ':'))
+        logger.debug(message_json)
 
-    try:
-        publish.single(args.topic, payload=message_json, hostname=args.host, port=args.port)
-    except Exception as error:
-        logger.error("Exception: {}".format(error))
-    finally:
-        time.sleep(args.frequency)
+        try:
+            publish.single(args.topic, payload=message_json, hostname=args.host, port=args.port)
+        except Exception as error:
+            logger.error("Exception: {}".format(error))
+        finally:
+            time.sleep(args.frequency)
 
 
 # Read in command-line parameters
