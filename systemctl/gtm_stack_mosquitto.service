@@ -1,5 +1,5 @@
 [Unit]
-Description=GTM Stack - Mosquitto Script
+Description=GTM Stack - Sensor to Mosquitto Script
 After=network.target
 
 [Service]

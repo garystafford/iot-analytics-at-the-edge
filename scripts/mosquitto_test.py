@@ -5,6 +5,7 @@ from datetime import datetime
 
 import paho.mqtt.publish as publish
 
+# Test Message to Mosquitto Script
 # Author: Gary A. Stafford
 # Date: 2021-03-26
 # Usage: python3 sensor_data_to_mosquitto.py \

@@ -17,6 +17,11 @@ mkdir -p ~/data/mosquitto/config
 Clone git project on Gateway vs. copying.
 
 ```shell
+git clone --branch v2021-03 --single-branch --depth 1 \
+    https://github.com/garystafford/iot-analytics-at-the-edge.git
+
+cp ./docker/mosquitto.conf ~/data/mosquitto/config/
+
 # EDGE_DEVICE_HOST=192.168.1.12
 # scp -i ~/.ssh/rasppi docker/mosquitto.conf \
 #     pi@${EDGE_DEVICE_HOST}:~/data/mosquitto/config/

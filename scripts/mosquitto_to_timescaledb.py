@@ -7,6 +7,7 @@ from datetime import datetime
 import paho.mqtt.client as mqtt
 import psycopg2
 
+# Mosquitto to TimescaleDB Script
 # Author: Gary A. Stafford
 # Date: 2021-03-26
 # Usage: python3 mosquitto_to_timescaledb.py \

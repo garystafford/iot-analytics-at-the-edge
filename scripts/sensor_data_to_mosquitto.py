@@ -11,6 +11,7 @@ from pytz import timezone
 
 from Sensors import Sensors
 
+# Sensor to Mosquitto Script
 # Author: Gary A. Stafford
 # Date: 2021-03-26
 # Usage: python3 sensor_data_to_mosquitto.py \
