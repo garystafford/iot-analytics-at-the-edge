@@ -14,6 +14,8 @@ mkdir -p ~/data/grafana
 mkdir -p ~/data/mosquitto/config
 ```
 
+Clone git project on Gateway vs. copying.
+
 ```shell
 # EDGE_DEVICE_HOST=192.168.1.12
 # scp -i ~/.ssh/rasppi docker/mosquitto.conf \
