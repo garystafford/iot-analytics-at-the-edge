@@ -7,7 +7,7 @@ from datetime import datetime
 import paho.mqtt.publish as publish
 
 # Author: Gary A. Stafford
-# Date: 10/11/2020
+# Date: 2021-03-26
 # Usage: python3 sensor_data_to_mosquitto.py \
 #           --host "192.168.1.12" --port 1883 \
 #           --topic "sensor/output" --frequency 10

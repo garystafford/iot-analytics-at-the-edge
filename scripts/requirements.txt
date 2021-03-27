@@ -6,4 +6,4 @@ gpiozero==1.5.1
 spidev==3.5
 paho-mqtt==1.5.1
 psycopg2-binary==2.8.6
-pytz==2020.1
+pytz==2021.1

@@ -8,7 +8,7 @@ import paho.mqtt.client as mqtt
 import psycopg2
 
 # Author: Gary A. Stafford
-# Date: 10/11/2020
+# Date: 2021-03-26
 # Usage: python3 mosquitto_to_timescaledb.py \
 #           --msqt_topic "sensor/output --msqt_host "192.168.1.12" --msqt_port 1883 \
 #           --ts_host "192.168.1.12" --ts_port 5432 \
