@@ -1,5 +1,11 @@
-version: "3.8"
+version: "3.9"  # optional since v1.27.0
 services:
+  superset:
+    image: garystafford/superset:1.0.0
+    ports:
+      - "8080:8088/tcp"
+    networks:
+      - demo-iot-net
   timescaledb:
     image: timescale/timescaledb:2.0.0-pg12
     ports:

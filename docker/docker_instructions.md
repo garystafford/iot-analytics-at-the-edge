@@ -6,7 +6,7 @@ docker exec -it tmp_mosquitto cat /mosquitto/config/mosquitto.conf eclipse-mosqu
 docker rm -f tmp_mosquitto
 ```
 
-Create on Gateway.
+Create directories on Gateway.
 
 ```shell
 mkdir -p ~/data/postgres
