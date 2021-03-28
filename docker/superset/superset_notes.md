@@ -1,9 +1,15 @@
+# Apache Superset Configuration
+
 Reference: <https://hub.docker.com/r/apache/superset>
+
+Build Docker container.
 
 ```shell
 docker build -t garystafford/superset:1.0.0 .
 docker push garystafford/superset:1.0.0
 ```
+
+Configure Docker container.
 
 ```shell
 SUPERSET_CONTAINER=$(docker ps -q \
@@ -30,7 +36,11 @@ docker exec -it ${SUPERSET_CONTAINER} \
 
 docker exec -it ${SUPERSET_CONTAINER} \
   superset export_datasources
+```
 
+Copy and install datasource to superset container.
+
+```shell
 docker cp datasource.yml ${SUPERSET_CONTAINER}:/tmp
 
 docker exec -it ${SUPERSET_CONTAINER} \
