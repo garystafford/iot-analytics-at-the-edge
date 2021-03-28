@@ -1,0 +1,32 @@
+databases:
+- database_name: TimeScaleDB
+  sqlalchemy_uri: postgresql+psycopg2://postgres:postgres1234@timescaledb:5432/demo_iot
+  tables:
+  - columns:
+    - column_name: time
+      is_dttm: true
+      type: TIMESTAMP WITH TIME ZONE
+    - column_name: temperature
+      type: DOUBLE PRECISION
+    - column_name: co
+      type: DOUBLE PRECISION
+    - column_name: humidity
+      type: DOUBLE PRECISION
+    - column_name: smoke
+      type: DOUBLE PRECISION
+    - column_name: lpg
+      type: DOUBLE PRECISION
+    - column_name: light
+      type: BOOLEAN
+    - column_name: motion
+      type: BOOLEAN
+    - column_name: device_id
+      type: TEXT
+    main_dttm_col: time
+    metrics:
+    - expression: COUNT(*)
+      metric_name: count
+      metric_type: count
+      verbose_name: COUNT(*)
+    schema: public
+    table_name: sensor_data
