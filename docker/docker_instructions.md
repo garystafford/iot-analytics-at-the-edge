@@ -1,5 +1,7 @@
 # Docker Instructions
 
+Extract `mosquitto.conf`.
+
 ```shell
 docker run --name tmp_mosquitto -p 1883:1883 eclipse-mosquitto:2.0.9
 docker exec -it tmp_mosquitto cat /mosquitto/config/mosquitto.conf eclipse-mosquitto
@@ -14,7 +16,7 @@ mkdir -p ~/data/grafana
 mkdir -p ~/data/mosquitto/config
 ```
 
-Clone git project on Gateway vs. copying.
+Clone git project on Gateway versus copying.
 
 ```shell
 git clone --branch v2021-03 --single-branch --depth 1 \
@@ -26,8 +28,8 @@ cp ./docker/mosquitto.conf ~/data/mosquitto/config/
 # scp -i ~/.ssh/rasppi docker/mosquitto.conf \
 #     pi@${EDGE_DEVICE_HOST}:~/data/mosquitto/config/
 ```
-
-Create on Gateway.
+ 
+Deploy stack on Gateway.
 
 ```shell
 docker swarm init
@@ -36,6 +38,8 @@ docker stack deploy -c stack.yml iot
 docker stack ps iot --no-trunc
 docker stack services iot
 ```
+
+Results.
 
 ```text
 > docker ps
@@ -56,7 +60,7 @@ woyaqpiohu7c   iot_pgadmin       replicated   1/1        biarms/pgadmin4:4.21   
 ij1huytkfh5c   iot_timescaledb   replicated   1/1        timescale/timescaledb:2.0.0-pg12   *:5432->5432/tcp
 ```
 
-Delete stack.
+Delete the stack.
 
 ```shell
 docker stack rm iot
