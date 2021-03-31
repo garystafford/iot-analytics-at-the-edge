@@ -41,8 +41,8 @@ CREATE VIEW air_quality_summary_minute WITH (timescaledb.continuous) AS
 SELECT device_id,
        time_bucket(INTERVAL '1 minute', time) AS bucket,
        AVG(lpg) AS avg_lpg,
-       MAX(co) AS avg_co,
-       MIN(smoke) AS avg_smoke
+       AVG(co) AS avg_co,
+       AVG(smoke) AS avg_smoke
 FROM sensor_data
 GROUP BY device_id,
          bucket;
