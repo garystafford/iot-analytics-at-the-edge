@@ -72,9 +72,16 @@ def publish_message_to_db(message):
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
 
     data = (
-        message_payload["time"], message_payload["device_id"], message_payload["data"]["temperature"],
-        message_payload["data"]["humidity"], message_payload["data"]["lpg"], message_payload["data"]["co"],
-        message_payload["data"]["smoke"], message_payload["data"]["light"], message_payload["data"]["motion"])
+        message_payload["time"],
+        message_payload["device_id"],
+        message_payload["data"]["temperature"],
+        message_payload["data"]["humidity"],
+        message_payload["data"]["lpg"],
+        message_payload["data"]["co"],
+        message_payload["data"]["smoke"],
+        message_payload["data"]["light"],
+        message_payload["data"]["motion"]
+    )
 
     try:
         with psycopg2.connect(ts_connection, connect_timeout=3) as conn:
