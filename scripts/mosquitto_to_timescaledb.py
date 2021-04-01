@@ -9,7 +9,7 @@ import psycopg2
 
 # Mosquitto to TimescaleDB Script
 # Author: Gary A. Stafford
-# Date: 2021-03-26
+# Date: 2021-03-31
 # Usage: python3 mosquitto_to_timescaledb.py \
 #           --msqt_topic "sensor/output --msqt_host "192.168.1.12" --msqt_port 1883 \
 #           --ts_host "192.168.1.12" --ts_port 5432 \
