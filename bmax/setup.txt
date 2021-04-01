@@ -1,0 +1,25 @@
+Ubuntu Server 20.04.2 LTS on BMAX Mini PC B1
+
+BMAX Specs
+https://www.amazon.com/Celeron-2-48GHz-Computer-M-2-2280-Ethernet/dp/B07ZYCZJVQ
+Mini PC Intel Celeron N3060 (up to 2.48GHz) Windows 10 Mini Computer, 4GB DDR3/64GB eMMC,
+HDMI/VGA Port, Support M.2_2280 SATA SSD, 4K HD, Gigabit Ethernet, 2.4G/5.8G Dual WiFi, BT4.2
+
+1. Ubuntu from USB Stick (Manual Server installation)
+https://ubuntu.com/download/server
+https://ubuntu.com/tutorials/create-a-usb-stick-on-macos#1-overview
+
+2.  WiFi
+https://linuxconfig.org/ubuntu-20-04-connect-to-wifi-from-command-line
+
+3. SSH
+https://linuxize.com/post/how-to-enable-ssh-on-ubuntu-20-04/
+https://linuxconfig.org/enable-ssh-on-ubuntu-20-04-focal-fossa-linux
+
+4. Docker (remove snal/install)
+https://stackoverflow.com/questions/52526219/docker-mkdir-read-only-file-system/52566470#52566470
+
+https://www.linode.com/docs/guides/install-docker-ce-ubuntu-1804/
+
+5. Python 3
+https://www.digitalocean.com/community/tutorials/how-to-install-python-3-and-set-up-a-programming-environment-on-an-ubuntu-20-04-server
