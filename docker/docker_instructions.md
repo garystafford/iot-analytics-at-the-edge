@@ -1,5 +1,7 @@
 # Docker Instructions
 
+Why are we running an earlier version of TimescaleDB (2.0.0)? `signal 11: Segmentation fault`: <https://github.com/timescale/timescaledb/issues/2968>
+
 Extract `mosquitto.conf`.
 
 ```shell
