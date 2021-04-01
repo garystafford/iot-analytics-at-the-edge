@@ -132,7 +132,7 @@ ORDER BY time desc;
 -- find average humidity (%) for last 12 hours in 5-minute time periods
 -- https://docs.timescale.com/latest/using-timescaledb/reading-data#time-bucket
 SELECT time_bucket('5 minutes', time) AS time_period,
-       avg(humidity)                  AS avg_humidity
+       avg(humidity) AS avg_humidity
 FROM sensor_data
 WHERE device_id = 'Main Warehouse'
   AND humidity BETWEEN 0 AND 100
