@@ -16,6 +16,8 @@ Create directories on Gateway.
 mkdir -p ~/data/postgres
 mkdir -p ~/data/grafana
 mkdir -p ~/data/mosquitto/config
+mkdir -p ~/data/mosquitto/data
+mkdir -p ~/data/mosquitto/log
 ```
 
 Clone git project on Gateway versus copying.
