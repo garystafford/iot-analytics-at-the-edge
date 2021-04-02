@@ -31,7 +31,7 @@ CREATE MATERIALIZED VIEW temperature_humidity_summary_minute(device_id, bucket, 
                avg(humidity)
         FROM sensor_data
         WHERE humidity BETWEEN 0 AND 100
-        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+        GROUP BY time_bucket(INTERVAL '1 minute', time), device_id
     WITH NO DATA;
 
 -- air quality (lpg, co, smoke)
@@ -43,7 +43,7 @@ CREATE MATERIALIZED VIEW air_quality_summary_minute(device_id, bucket, avg_lpg, 
                avg(co),
                avg(smoke)
         FROM sensor_data
-        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+        GROUP BY time_bucket(INTERVAL '1 minute', time), device_id
     WITH NO DATA;
 
 -- light
@@ -53,9 +53,8 @@ CREATE MATERIALIZED VIEW light_summary_minute(device_id, bucket, avg_light)
                time_bucket(INTERVAL '1 minute', time),
                avg(case when light = 't' then 1 else 0 end)
         FROM sensor_data
-        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+        GROUP BY time_bucket(INTERVAL '1 minute', time), device_id
     WITH NO DATA;
-
 
 -- motion
 CREATE MATERIALIZED VIEW motion_summary_minute(device_id, bucket, avg_motion)
@@ -64,7 +63,7 @@ CREATE MATERIALIZED VIEW motion_summary_minute(device_id, bucket, avg_motion)
                time_bucket(INTERVAL '1 minute', time),
                avg(case when motion = 't' then 1 else 0 end)
         FROM sensor_data
-        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+        GROUP BY time_bucket(INTERVAL '1 minute', time), device_id
     WITH NO DATA;
 
 -- view continuous aggregates
