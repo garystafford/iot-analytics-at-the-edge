@@ -1,4 +1,4 @@
-version: "3.9"  # optional since v1.27.0
+version: "3.9"
 services:
   superset:
     image: garystafford/superset:1.0.0
@@ -7,7 +7,7 @@ services:
     networks:
       - demo-iot-net
   timescaledb:
-    image: timescale/timescaledb:2.1.1-pg12
+    image: timescale/timescaledb:2.1.1-pg13
     ports:
       - "5432:5432/tcp"
     networks:
@@ -22,7 +22,7 @@ services:
     volumes:
       - "$HOME/data/postgres:/var/lib/postgresql/data"
   grafana:
-    image: grafana/grafana:7.5.0
+    image: grafana/grafana:7.5.2
     ports:
       - "3000:3000/tcp"
     networks:
@@ -55,5 +55,6 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+
 networks:
   demo-iot-net:

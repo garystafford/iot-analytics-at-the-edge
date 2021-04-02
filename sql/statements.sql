@@ -25,7 +25,8 @@ SELECT create_hypertable('sensor_data', 'time');
 SELECT count(*) FROM sensor_data;
 SELECT * FROM sensor_data limit 10;
 
--- materialized views
+-- create materialized views (continuous aggregates)
+
 -- temperature and humidity
 CREATE MATERIALIZED VIEW temperature_humidity_summary_minute(device_id, bucket, avg_temp, avg_humidity)
     WITH (timescaledb.continuous) AS
@@ -80,12 +81,15 @@ CREATE MATERIALIZED VIEW motion_summary_minute(device_id, bucket, avg_motion)
         GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
     WITH NO DATA;
 
+-- view continuous aggregates
+SELECT * FROM timescaledb_information.continuous_aggregates;
+
 drop materialized view air_quality_summary_minute;
 drop materialized view light_summary_minute;
 drop materialized view motion_summary_minute;
 drop materialized view temperature_humidity_summary_minute;
 
--- Create a policy that automatically refreshes a continuous aggregate
+-- create policies that automatically refreshes continuous aggregates
 SELECT add_continuous_aggregate_policy('air_quality_summary_minute',
     start_offset => INTERVAL '1 week',
     end_offset => INTERVAL '1 hour',
@@ -106,7 +110,12 @@ SELECT add_continuous_aggregate_policy('temperature_humidity_summary_minute',
     end_offset => INTERVAL '1 hour',
     schedule_interval => INTERVAL '1 hour');
 
+--view jobs
 SELECT * FROM timescaledb_information.jobs;
+
+--view job stats
+SELECT job_id, total_runs, total_failures, total_successes
+  FROM timescaledb_information.job_stats;
 
 SELECT remove_continuous_aggregate_policy('air_quality_summary_minute');
 SELECT remove_continuous_aggregate_policy('light_summary_minute');
