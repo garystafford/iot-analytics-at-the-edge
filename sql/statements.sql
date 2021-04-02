@@ -23,59 +23,54 @@ TRUNCATE sensor_data;
 SELECT count(*) FROM sensor_data;
 SELECT * FROM sensor_data limit 10;
 
---views
--- temperature and humidity
-CREATE MATERIALIZED VIEW temperature_humidity_summary_minute WITH (timescaledb.continuous) AS
-SELECT device_id,
-       time_bucket(INTERVAL '1 minute', time) AS bucket,
-       avg(temperature) AS avg_temp,
-       avg(humidity) AS avg_humidity
-FROM sensor_data
-WHERE humidity >= 0.0
-  AND humidity <= 100.0
-GROUP BY device_id,
-         bucket
-ORDER BY bucket;
+CREATE MATERIALIZED VIEW temperature_humidity_summary_minute(device_id, bucket, avg_temp, avg_humidity)
+    WITH (timescaledb.continuous) AS
+        SELECT device_id,
+               time_bucket(INTERVAL '1 minute', time),
+               avg(temperature),
+               avg(humidity)
+        FROM sensor_data
+        WHERE humidity >= 0.0 AND humidity <= 100.0
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time);
 
 -- air quality (lpg, co, smoke)
-CREATE MATERIALIZED VIEW air_quality_summary_minute WITH (timescaledb.continuous) AS
-SELECT device_id,
-       time_bucket(INTERVAL '1 minute', time) AS bucket,
-       avg(lpg) AS avg_lpg,
-       avg(co) AS avg_co,
-       avg(smoke) AS avg_smoke
-FROM sensor_data
-GROUP BY device_id,
-         bucket;
+CREATE MATERIALIZED VIEW air_quality_summary_minute(device_id, bucket, avg_lpg, avg_co, avg_smoke)
+    WITH (timescaledb.continuous) AS
+        SELECT device_id,
+               time_bucket(INTERVAL '1 minute', time),
+               avg(lpg),
+               avg(co),
+               avg(smoke)
+        FROM sensor_data
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time);
 
 -- light
-CREATE MATERIALIZED VIEW light_summary_minute WITH (timescaledb.continuous) AS
-SELECT device_id,
-       time_bucket(INTERVAL '1 minute', time) AS bucket,
-       avg(
-               case
-                   when light = 't' then 1
-                   else 0
-                   end
-           ) AS avg_light
-FROM sensor_data
-GROUP BY device_id,
-         bucket;
+CREATE MATERIALIZED VIEW light_summary_minute(device_id, bucket, avg_light)
+    WITH (timescaledb.continuous) AS
+        SELECT device_id,
+               time_bucket(INTERVAL '1 minute', time),
+               avg(
+                       case
+                           when light = 't' then 1
+                           else 0
+                           end
+                   )
+        FROM sensor_data
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time);
 
 -- motion
-CREATE MATERIALIZED VIEW motion_summary_minute WITH (timescaledb.continuous) AS
-SELECT device_id,
-       time_bucket(INTERVAL '1 minute', time) AS bucket,
-       avg(
-               case
-                   when motion = 't' then 1
-                   else 0
-                   end
-           ) AS avg_motion
-FROM sensor_data
-GROUP BY device_id,
-         bucket;
-
+CREATE MATERIALIZED VIEW motion_summary_minute(device_id, bucket, avg_motion)
+    WITH (timescaledb.continuous) AS
+        SELECT device_id,
+               time_bucket(INTERVAL '1 minute', time),
+               avg(
+                       case
+                           when motion = 't' then 1
+                           else 0
+                           end
+                   )
+        FROM sensor_data
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time);
 
 -- grafana user and grants
 CREATE USER grafanareader WITH PASSWORD 'grafana1234';
@@ -90,7 +85,6 @@ GRANT SELECT ON public.motion_summary_minute TO grafanareader;
 SELECT *
 FROM temperature_humidity_summary_minute
 ORDER BY bucket;
-
 
 -- ad-hoc queries
 -- find max temperature (°C) and humidity (%) for last 3 hours in 15 minute time periods
