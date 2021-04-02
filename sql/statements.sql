@@ -19,11 +19,8 @@ CREATE TABLE IF NOT EXISTS sensor_data
 
 SELECT create_hypertable('sensor_data', 'time');
 
-TRUNCATE sensor_data;
-SELECT count(*) FROM sensor_data;
-SELECT * FROM sensor_data limit 10;
 
--- materialized views
+-- create materialized views
 
 -- temperature and humidity
 CREATE MATERIALIZED VIEW temperature_humidity_summary_minute(device_id, bucket, avg_temp, avg_humidity)
@@ -34,7 +31,8 @@ CREATE MATERIALIZED VIEW temperature_humidity_summary_minute(device_id, bucket, 
                avg(humidity)
         FROM sensor_data
         WHERE humidity >= 0.0 AND humidity <= 100.0
-        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time);
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+    WITH NO DATA;
 
 -- air quality (lpg, co, smoke)
 CREATE MATERIALIZED VIEW air_quality_summary_minute(device_id, bucket, avg_lpg, avg_co, avg_smoke)
@@ -45,7 +43,8 @@ CREATE MATERIALIZED VIEW air_quality_summary_minute(device_id, bucket, avg_lpg, 
                avg(co),
                avg(smoke)
         FROM sensor_data
-        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time);
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+    WITH NO DATA;
 
 -- light
 CREATE MATERIALIZED VIEW light_summary_minute(device_id, bucket, avg_light)
@@ -59,7 +58,9 @@ CREATE MATERIALIZED VIEW light_summary_minute(device_id, bucket, avg_light)
                            end
                    )
         FROM sensor_data
-        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time);
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+    WITH NO DATA;
+
 
 -- motion
 CREATE MATERIALIZED VIEW motion_summary_minute(device_id, bucket, avg_motion)
@@ -73,7 +74,41 @@ CREATE MATERIALIZED VIEW motion_summary_minute(device_id, bucket, avg_motion)
                            end
                    )
         FROM sensor_data
-        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time);
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+    WITH NO DATA;
+
+-- view continuous aggregates
+SELECT * FROM timescaledb_information.continuous_aggregates;
+
+
+-- create policies that automatically refreshes continuous aggregates
+SELECT add_continuous_aggregate_policy('air_quality_summary_minute',
+    start_offset => INTERVAL '1 week',
+    end_offset => INTERVAL '1 hour',
+    schedule_interval => INTERVAL '1 hour');
+
+SELECT add_continuous_aggregate_policy('light_summary_minute',
+    start_offset => INTERVAL '1 week',
+    end_offset => INTERVAL '1 hour',
+    schedule_interval => INTERVAL '1 hour');
+
+SELECT add_continuous_aggregate_policy('motion_summary_minute',
+    start_offset => INTERVAL '1 week',
+    end_offset => INTERVAL '1 hour',
+    schedule_interval => INTERVAL '1 hour');
+
+SELECT add_continuous_aggregate_policy('temperature_humidity_summary_minute',
+    start_offset => INTERVAL '1 week',
+    end_offset => INTERVAL '1 hour',
+    schedule_interval => INTERVAL '1 hour');
+
+--view jobs
+SELECT * FROM timescaledb_information.jobs;
+
+--view job stats
+SELECT job_id, total_runs, total_failures, total_successes
+  FROM timescaledb_information.job_stats;
+
 
 -- grafana user and grants
 CREATE USER grafanareader WITH PASSWORD 'grafana1234';
