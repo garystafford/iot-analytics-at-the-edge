@@ -119,7 +119,7 @@ ORDER BY bucket;
 -- https://docs.timescale.com/latest/using-timescaledb/reading-data#select
 SELECT time_bucket('15 minutes', time) AS fifteen_min,
        device_id,
-       count(*),
+       count(time),
        max(temperature) AS max_temp,
        max(humidity) AS max_hum
 FROM sensor_data
@@ -165,7 +165,7 @@ ORDER BY time_period desc;
 -- calculate histograms of avg. temperature (°F) between 55-85°F in 5°F buckets during last 2 days
 -- https://docs.timescale.com/latest/using-timescaledb/reading-data#histogram
 SELECT device_id,
-       count(*),
+       count(time),
        histogram((temperature * 1.9) + 32, 55.0, 85.0, 5)
 FROM sensor_data
 WHERE temperature IS NOT NULL
