@@ -30,7 +30,7 @@ CREATE MATERIALIZED VIEW temperature_humidity_summary_minute(device_id, bucket, 
                avg(temperature),
                avg(humidity)
         FROM sensor_data
-        WHERE humidity >= 0.0 AND humidity <= 100.0
+        WHERE humidity BETWEEN 0 AND 100
         GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
     WITH NO DATA;
 
