@@ -16,7 +16,7 @@ services:
     volumes:
       - "$HOME/data/postgres:/var/lib/postgresql/data"
   grafana:
-    image: grafana/grafana:7.5.0
+    image: grafana/grafana:7.5.2
     ports:
       - "3000:3000/tcp"
     networks:
