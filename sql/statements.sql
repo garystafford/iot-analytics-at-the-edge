@@ -51,12 +51,7 @@ CREATE MATERIALIZED VIEW light_summary_minute(device_id, bucket, avg_light)
     WITH (timescaledb.continuous) AS
         SELECT device_id,
                time_bucket(INTERVAL '1 minute', time),
-               avg(
-                       case
-                           when light = 't' then 1
-                           else 0
-                           end
-                   )
+               avg(case when light = 't' then 1 else 0 end)
         FROM sensor_data
         GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
     WITH NO DATA;
@@ -67,12 +62,7 @@ CREATE MATERIALIZED VIEW motion_summary_minute(device_id, bucket, avg_motion)
     WITH (timescaledb.continuous) AS
         SELECT device_id,
                time_bucket(INTERVAL '1 minute', time),
-               avg(
-                       case
-                           when motion = 't' then 1
-                           else 0
-                           end
-                   )
+               avg(case when motion = 't' then 1 else 0 end)
         FROM sensor_data
         GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
     WITH NO DATA;
@@ -178,7 +168,7 @@ SELECT device_id,
        count(*),
        histogram((temperature * 1.9) + 32, 55.0, 85.0, 5)
 FROM sensor_data
-WHERE temperature is not Null
+WHERE temperature IS NOT NULL
     AND time > now() - INTERVAL '2 days'
 GROUP BY device_id;
 
