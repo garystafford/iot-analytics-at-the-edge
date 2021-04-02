@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS sensor_data
 SELECT create_hypertable('sensor_data', 'time');
 
 
--- create materialized views
+-- create materialized views (continuous aggregates)
 
 -- temperature and humidity
 CREATE MATERIALIZED VIEW temperature_humidity_summary_minute(device_id, bucket, avg_temp, avg_humidity)
