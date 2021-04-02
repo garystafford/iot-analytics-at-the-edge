@@ -23,6 +23,9 @@ TRUNCATE sensor_data;
 SELECT count(*) FROM sensor_data;
 SELECT * FROM sensor_data limit 10;
 
+-- materialized views
+
+-- temperature and humidity
 CREATE MATERIALIZED VIEW temperature_humidity_summary_minute(device_id, bucket, avg_temp, avg_humidity)
     WITH (timescaledb.continuous) AS
         SELECT device_id,
