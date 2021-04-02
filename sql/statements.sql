@@ -3,8 +3,10 @@ CREATE DATABASE demo_iot;
 
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 
+CREATE SCHEMA public;
+
 -- iot data table
-CREATE TABLE IF NOT EXISTS sensor_data
+CREATE TABLE IF NOT EXISTS public.sensor_data
 (
     time        timestamptz      NOT NULL,
     device_id   text             NOT NULL,
@@ -19,63 +21,97 @@ CREATE TABLE IF NOT EXISTS sensor_data
 
 SELECT create_hypertable('sensor_data', 'time');
 
-TRUNCATE sensor_data;
+-- TRUNCATE sensor_data;
 SELECT count(*) FROM sensor_data;
 SELECT * FROM sensor_data limit 10;
 
---views
+-- materialized views
 -- temperature and humidity
-CREATE MATERIALIZED VIEW temperature_humidity_summary_minute WITH (timescaledb.continuous) AS
-SELECT device_id,
-       time_bucket(INTERVAL '1 minute', time) AS bucket,
-       avg(temperature) AS avg_temp,
-       avg(humidity) AS avg_humidity
-FROM sensor_data
-WHERE humidity >= 0.0
-  AND humidity <= 100.0
-GROUP BY device_id,
-         bucket
-ORDER BY bucket;
+CREATE MATERIALIZED VIEW temperature_humidity_summary_minute(device_id, bucket, avg_temp, avg_humidity)
+    WITH (timescaledb.continuous) AS
+        SELECT device_id,
+               time_bucket(INTERVAL '1 minute', time),
+               avg(temperature),
+               avg(humidity)
+        FROM sensor_data
+        WHERE humidity >= 0.0 AND humidity <= 100.0
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+    WITH NO DATA;
 
 -- air quality (lpg, co, smoke)
-CREATE MATERIALIZED VIEW air_quality_summary_minute WITH (timescaledb.continuous) AS
-SELECT device_id,
-       time_bucket(INTERVAL '1 minute', time) AS bucket,
-       avg(lpg) AS avg_lpg,
-       avg(co) AS avg_co,
-       avg(smoke) AS avg_smoke
-FROM sensor_data
-GROUP BY device_id,
-         bucket;
+CREATE MATERIALIZED VIEW air_quality_summary_minute(device_id, bucket, avg_lpg, avg_co, avg_smoke)
+    WITH (timescaledb.continuous) AS
+        SELECT device_id,
+               time_bucket(INTERVAL '1 minute', time),
+               avg(lpg),
+               avg(co),
+               avg(smoke)
+        FROM sensor_data
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+    WITH NO DATA;
 
 -- light
-CREATE MATERIALIZED VIEW light_summary_minute WITH (timescaledb.continuous) AS
-SELECT device_id,
-       time_bucket(INTERVAL '1 minute', time) AS bucket,
-       avg(
-               case
-                   when light = 't' then 1
-                   else 0
-                   end
-           ) AS avg_light
-FROM sensor_data
-GROUP BY device_id,
-         bucket;
+CREATE MATERIALIZED VIEW light_summary_minute(device_id, bucket, avg_light)
+    WITH (timescaledb.continuous) AS
+        SELECT device_id,
+               time_bucket(INTERVAL '1 minute', time),
+               avg(
+                       case
+                           when light = 't' then 1
+                           else 0
+                           end
+                   )
+        FROM sensor_data
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+    WITH NO DATA;
 
 -- motion
-CREATE MATERIALIZED VIEW motion_summary_minute WITH (timescaledb.continuous) AS
-SELECT device_id,
-       time_bucket(INTERVAL '1 minute', time) AS bucket,
-       avg(
-               case
-                   when motion = 't' then 1
-                   else 0
-                   end
-           ) AS avg_motion
-FROM sensor_data
-GROUP BY device_id,
-         bucket;
+CREATE MATERIALIZED VIEW motion_summary_minute(device_id, bucket, avg_motion)
+    WITH (timescaledb.continuous) AS
+        SELECT device_id,
+               time_bucket(INTERVAL '1 minute', time),
+               avg(
+                       case
+                           when motion = 't' then 1
+                           else 0
+                           end
+                   )
+        FROM sensor_data
+        GROUP BY device_id, time_bucket(INTERVAL '1 minute', time)
+    WITH NO DATA;
 
+drop materialized view air_quality_summary_minute;
+drop materialized view light_summary_minute;
+drop materialized view motion_summary_minute;
+drop materialized view temperature_humidity_summary_minute;
+
+-- Create a policy that automatically refreshes a continuous aggregate
+SELECT add_continuous_aggregate_policy('air_quality_summary_minute',
+    start_offset => INTERVAL '1 week',
+    end_offset => INTERVAL '1 hour',
+    schedule_interval => INTERVAL '1 hour');
+
+SELECT add_continuous_aggregate_policy('light_summary_minute',
+    start_offset => INTERVAL '1 week',
+    end_offset => INTERVAL '1 hour',
+    schedule_interval => INTERVAL '1 hour');
+
+SELECT add_continuous_aggregate_policy('motion_summary_minute',
+    start_offset => INTERVAL '1 week',
+    end_offset => INTERVAL '1 hour',
+    schedule_interval => INTERVAL '1 hour');
+
+SELECT add_continuous_aggregate_policy('temperature_humidity_summary_minute',
+    start_offset => INTERVAL '1 week',
+    end_offset => INTERVAL '1 hour',
+    schedule_interval => INTERVAL '1 hour');
+
+SELECT * FROM timescaledb_information.jobs;
+
+SELECT remove_continuous_aggregate_policy('air_quality_summary_minute');
+SELECT remove_continuous_aggregate_policy('light_summary_minute');
+SELECT remove_continuous_aggregate_policy('motion_summary_minute');
+SELECT remove_continuous_aggregate_policy('temperature_humidity_summary_minute');
 
 -- grafana user and grants
 CREATE USER grafanareader WITH PASSWORD 'grafana1234';
