@@ -55,5 +55,6 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+
 networks:
   demo-iot-net:
