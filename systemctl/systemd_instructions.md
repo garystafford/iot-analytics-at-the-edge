@@ -12,7 +12,10 @@ Install and start `systemd` services.
 ```shell
 # iot devices (sensors)
 SERVICE=gtm_stack_mosquitto
-sudo cp systemctl/${SERVICE}.service /etc/systemd/system/
+sudo systemctl stop ${SERVICE}.service
+sudo systemctl disable ${SERVICE}.service
+sudo cp ${SERVICE}.service /etc/systemd/system/
+sudo systemctl daemon-reload
 sudo systemctl start ${SERVICE}.service
 sudo systemctl enable ${SERVICE}.service
 systemctl status ${SERVICE}.service
@@ -20,7 +23,10 @@ ps aux | grep sensor_data_to_mosquitto.py
 
 # edge node (gateways)
 SERVICE=gtm_stack_mosq_to_tmscl
-sudo cp systemctl/${SERVICE}.service /etc/systemd/system/
+sudo systemctl stop ${SERVICE}.service
+sudo systemctl disable ${SERVICE}.service
+sudo cp ${SERVICE}.service /etc/systemd/system/
+sudo systemctl daemon-reload
 sudo systemctl start ${SERVICE}.service
 sudo systemctl enable ${SERVICE}.service
 systemctl status ${SERVICE}.service

@@ -4,13 +4,14 @@ After=network.target
 
 [Service]
 ExecStart=/usr/bin/python3 -u mosquitto_to_timescaledb.py \
-    --msqt_topic "sensor/output" --msqt_host "192.168.1.12" --msqt_port 1883 \
-    --ts_host "192.168.1.12" --ts_port 5432
-WorkingDirectory=/home/pi/iot-analytics-at-the-edge/scripts
+    --msqt_topic "sensor/output" --msqt_host "localhost" --msqt_port 1883 \
+    --ts_host "localhost" --ts_port 5432 \
+    --ts_username postgres --ts_password postgres1234 --ts_database demo_iot
+WorkingDirectory=/home/garystafford/iot-analytics-at-the-edge/scripts
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
-User=pi
+User=garystafford
 
 [Install]
 WantedBy=multi-user.target
